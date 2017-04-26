@@ -13,20 +13,74 @@ ApplicationWindow {
         id: container
         anchors.fill: parent
 
-//        MouseArea {
-//            anchors.fill: parent
-//            z: 3
-//            onClicked: {
-//                onClicked: container.forceActiveFocus();
-//                console.log("Clicked!")
-
-//            }
-//        }
 
         ListView {
             model: dataList
             anchors.fill: parent
             delegate: theDelegate
+            header: headerRow
+            headerPositioning: ListView.OverlayHeader
+            spacing: 5
+        }
+
+        Component {
+            id: headerRow
+            Item {
+                width: parent.width
+                height: 30
+                z: 2
+                Rectangle {
+                    id: headerContainer
+                    color: "grey"
+                    width: parent.width
+                    height: parent.height
+                    Row {
+                        spacing: 5
+                        Rectangle {
+                            width: 40
+                            height: 30
+                            color: "transparent"
+                            Label {
+                                id: plus
+                                text: "\u271A"
+                                width: 40
+                                padding: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: -5
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    plus.color = "white"
+                                }
+                                onExited: {
+                                    plus.color = "black"
+                                }
+                                onClicked: {
+                                    dataList.appendRow()
+                                }
+                            }
+                        }
+                        Label {
+                            text: "Name"
+                            width: 100
+                        }
+                        Label {
+                            text: "Description"
+                            width: 200
+                        }
+                        Label {
+                            text: "Quantity"
+                            width: 200
+                        }
+                        Label {
+                            text: "Flag"
+                            width: 30
+                        }
+                    }
+                }
+            }
         }
 
         Component {
@@ -44,7 +98,7 @@ ApplicationWindow {
 
                     Row {
                         id: row1
-                        spacing: 10
+                        spacing: 5
 
                         Rectangle {
                             width: 30
@@ -59,57 +113,39 @@ ApplicationWindow {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 padding: 5
 
-                                text: "\u25B6"
-                                font.pointSize: 12
+                                text: "\u2BC8"
+                                font.pointSize: 16
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    indicator.text = "\u2BC6"
+                                }
+                                onExited: {
+                                    indicator.text = "\u2BC8"
+                                }
                             }
                         }
 
                         Rectangle {
-                            width: 50
+                            width: 100
                             height: 30
                             anchors.verticalCenter: parent.verticalCenter
                             color: "transparent"
 
-                            Text {
-                                id: nameItem
-                                text: Name
-                                font.bold: true
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: parent.width
-                                padding: 10
-
-                            }
-
                             TextField {
                                 id: nameEditor
                                 text: Name
-                                visible: false
+                                visible: true
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width
                                 padding: 10
-                                z: 3
                                 onEditingFinished: {
-                                    visible = false
-                                    nameItem.visible = true
                                     var idx = dataList.index(index, 0);
                                     dataList.setData(idx, nameEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
-                                }
-                            }
-
-                            MouseArea{
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                z: 2
-                                onClicked: {
-                                    nameItem.visible = false
-                                    nameEditor.visible = true
-                                }
-                                onEntered: {
-                                    parent.color ="red"
-                                }
-                                onExited: {
-                                    parent.color = "transparent"
                                 }
                             }
                         }
@@ -121,86 +157,80 @@ ApplicationWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             color: "transparent"
 
-                            Text {
-                                id: descriptionItem
-                                text: Description
-                                anchors.verticalCenter: parent.verticalCenter
-                                font.pixelSize: 12
-                                width: 200
-                                padding: 10
-                            }
-
-
                             TextField {
                                 id: descriptionEditor
                                 text: Description
-                                visible: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width
                                 padding: 10
-                                z: 3
                                 onEditingFinished: {
-                                    visible = false
-                                    descriptionItem.visible = true
                                     var idx = dataList.index(index, 1);
                                     dataList.setData(idx, descriptionEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
                                 }
                             }
+                        }
 
+                        Rectangle {
+                            width: 200
+                            height: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "transparent"
 
-                            MouseArea{
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                z: 2
-                                onClicked: {
-                                    descriptionItem.visible = false
-                                    descriptionEditor.visible = true
-
+                            TextField {
+                                id: quantityEditor
+                                text: Quantity
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 12
+                                padding: 10
+                                onEditingFinished: {
+                                    var idx = dataList.index(index, 2);
+                                    dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
+                                    dataList.submitAll();
+                                    quantitySlider.value = text
                                 }
-                                onEntered: {
-                                    parent.color ="green"
-                                }
-                                onExited: {
-                                    parent.color = "transparent"
+                                validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
+
+                            }
+
+                            Slider {
+                                id: quantitySlider
+                                anchors.left: quantityEditor.right
+                                anchors.leftMargin: 5
+                                anchors.right: parent.right
+                                anchors.rightMargin: 5
+                                from: 100
+                                to: 300
+                                value: 25
+                                snapMode: Slider.SnapOnRelease
+                                stepSize: 5
+                                onValueChanged: {
+                                    quantityEditor.text = value;
+                                    var idx = dataList.index(index, 2);
+                                    dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
+                                    dataList.submitAll();
                                 }
                             }
                         }
 
                         Rectangle {
-                            width: 50
+                            width: flagItem.width
                             height: 30
                             anchors.verticalCenter: parent.verticalCenter
                             color: "transparent"
 
-                            Text {
-                                id: quantityItem
-                                text: Quantity
+                            CheckBox {
+                                id: flagItem
+                                checked: Flag
                                 anchors.verticalCenter: parent.verticalCenter
                                 font.pixelSize: 12
-                                padding: 10
-                            }
-
-                            MouseArea{
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                z: 2
-                                onClicked: {
-                                    var idx = dataList.index(index, 2);
-                                    dataList.setData(idx, dataList.data(idx, Qt.DisplayRole) * 2, Qt.EditRole);
+                                onCheckedChanged: {
+                                    var idx = dataList.index(index, 3);
+                                    dataList.setData(idx, flagItem.checked ,Qt.EditRole);
                                     dataList.submitAll();
-                                }
-                                onEntered: {
-                                    parent.color ="orange"
-                                    indicator.text = "\u25BC"
-                                }
-                                onExited: {
-                                    parent.color = "transparent"
-                                    indicator.text = "\u25B6"
                                 }
                             }
                         }
-
                     }
                 }
             }

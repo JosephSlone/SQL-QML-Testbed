@@ -22,9 +22,13 @@ public:
     void generateRoleNames();
     QVariant data(const QModelIndex &index, int role) const;
 
+
 private:
 
     QHash<int, QByteArray> m_roleNames;
+
+public slots:
+    bool appendRow();
 };
 
 #endif // SQLRELATIONALTABLEMODEL_H

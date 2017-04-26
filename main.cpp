@@ -16,7 +16,7 @@
 void listTable()
 {
     QSqlQuery query;
-    QString queryString = "select Name, Description, Quantity from data";
+    QString queryString = "select Name, Description, Quantity, Flag from data";
 
     query.exec(queryString);
 
@@ -24,7 +24,8 @@ void listTable()
     {
         qDebug() << query.record().field(0).value().toString()
                  << query.record().field(1).value().toString()
-                 << query.record().field(2).value().toInt();
+                 << query.record().field(2).value().toInt()
+                 << query.record().field(3).value().toBool();
     }
 
 }
@@ -42,9 +43,10 @@ bool initializeDb(QSqlDatabase db)
     }
 
     QString dataDDL = "CREATE TABLE data ( "
-            "Name        STRING  PRIMARY KEY,"
-            "Description STRING,"
-            "Quantity    INTEGER"
+            "Name        STRING  PRIMARY KEY, "
+            "Description STRING,              "
+            "Quantity    INTEGER,             "
+            "Flag        BOOLEAN              "
             ");";
 
     QSqlQuery query;
@@ -52,7 +54,7 @@ bool initializeDb(QSqlDatabase db)
     if (query.exec(dataDDL))
     {
 
-        QString queryString = "INSERT INTO data (Name, Description, Quantity) VALUES (?,?,?)";
+        QString queryString = "INSERT INTO data (Name, Description, Quantity, Flag) VALUES (?,?,?,?)";
 
         QVariantList names;
         names << "One" << "Two" << "Three" << "Four";
@@ -60,11 +62,14 @@ bool initializeDb(QSqlDatabase db)
         descriptions << "Number One" << "Number Two" << "Number Three" << "Number 4";
         QVariantList quantity;
         quantity << 1 << 2 << 3 << 4;
+        QVariantList flag;
+        flag << 0 << 1 << 1 << 0;
 
         query.prepare(queryString);
         query.addBindValue(names);
         query.addBindValue(descriptions);
         query.addBindValue(quantity);
+        query.addBindValue(flag);
 
         if (!query.execBatch())
         {

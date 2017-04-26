@@ -28,3 +28,18 @@ QVariant SqlRelationalTableModel::data(const QModelIndex &index, int role) const
     }
     return value;
 }
+
+bool SqlRelationalTableModel::appendRow()
+{
+    int row = 0;   // Need to calculate this here
+    int col = 0;
+
+    QSqlRelationalTableModel::beginInsertRows(QModelIndex(), row, col);
+
+    // Actually Insert the blank row here.
+    // w a function call.
+
+    QSqlRelationalTableModel::endInsertRows();
+
+    return true;
+}
