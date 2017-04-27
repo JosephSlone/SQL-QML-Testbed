@@ -2,6 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>header.qml</file>
+        <file>HeaderItem.qml</file>
     </qresource>
 </RCC>

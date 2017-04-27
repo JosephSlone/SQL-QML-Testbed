@@ -37,13 +37,13 @@ ApplicationWindow {
                     Row {
                         spacing: 5
                         Rectangle {
-                            width: 40
+                            width: 35
                             height: 30
                             color: "transparent"
                             Label {
                                 id: plus
                                 text: "\u271A"
-                                width: 40
+                                width: 30
                                 padding: 10
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: -5
@@ -62,6 +62,35 @@ ApplicationWindow {
                                 }
                             }
                         }
+
+                        Rectangle {
+                            width: 30
+                            height: 30
+                            color: "transparent"
+                            Label {
+                                id: minus
+                                text: "\u2796"
+                                width: 30
+                                padding: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: -5
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    minus.color = "white"
+                                }
+                                onExited: {
+                                    minus.color = "black"
+                                }
+                                onClicked: {
+                                    dataList.appendRow()
+                                }
+                            }
+
+                        }
+
                         Label {
                             text: "Name"
                             width: 100
@@ -126,6 +155,19 @@ ApplicationWindow {
                                 onExited: {
                                     indicator.text = "\u2BC8"
                                 }
+                            }
+                        }
+
+                        Rectangle {
+                            id: deleteCheck
+                            width: 30
+                            height: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "transparent"
+
+                            CheckBox {
+                                checked: false
+                                font.pointSize: 12
                             }
                         }
 
