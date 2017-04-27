@@ -16,17 +16,23 @@
 void listTable()
 {
     QSqlQuery query;
-    QString queryString = "select Name, Description, Quantity, Flag from data";
+    QString queryString = "select id, Name, Description, Quantity, Flag from data";
 
     query.exec(queryString);
 
+
+    qDebug() << "The Table";
+    qDebug() << "========================";
     while (query.next())
     {
-        qDebug() << query.record().field(0).value().toString()
+        qDebug() << query.record().field(0).value().toInt()
                  << query.record().field(1).value().toString()
-                 << query.record().field(2).value().toInt()
-                 << query.record().field(3).value().toBool();
+                 << query.record().field(2).value().toString()
+                 << query.record().field(3).value().toInt()
+                 << query.record().field(4).value().toBool();
     }
+    qDebug() << "------------------------";
+    qDebug() << " ";
 
 }
 
@@ -43,10 +49,11 @@ bool initializeDb(QSqlDatabase db)
     }
 
     QString dataDDL = "CREATE TABLE data ( "
-            "Name        STRING  PRIMARY KEY, "
-            "Description STRING,              "
-            "Quantity    INTEGER,             "
-            "Flag        BOOLEAN              "
+            "id          INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "Name        STRING  DEFAULT ''               , "
+            "Description STRING  DEFAULT ''               , "
+            "Quantity    INTEGER DEFAULT 100              , "
+            "Flag        BOOLEAN DEFAULT 1                  "
             ");";
 
     QSqlQuery query;

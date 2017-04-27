@@ -31,15 +31,19 @@ QVariant SqlRelationalTableModel::data(const QModelIndex &index, int role) const
 
 bool SqlRelationalTableModel::appendRow()
 {
-    int row = 0;   // Need to calculate this here
-    int col = 0;
+    QString queryString = QString("INSERT INTO %1 DEFAULT VALUES").arg(QSqlRelationalTableModel::tableName());
+    QSqlQuery query;
 
-    QSqlRelationalTableModel::beginInsertRows(QModelIndex(), row, col);
+    if (query.exec(queryString))
+    {
+        select(); // Forces a refresh of the table.
+    }
+    else
+    {
+        QSqlError error = lastError();
+        qDebug() << "Append Failed" << error.text();
+    }
 
-    // Actually Insert the blank row here.
-    // w a function call.
-
-    QSqlRelationalTableModel::endInsertRows();
 
     return true;
 }

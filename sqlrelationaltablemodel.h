@@ -6,6 +6,7 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include <QSqlField>
+#include <QSqlError>
 #include <QString>
 #include <QVariant>
 

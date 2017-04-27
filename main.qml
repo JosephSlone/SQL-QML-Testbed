@@ -143,7 +143,7 @@ ApplicationWindow {
                                 width: parent.width
                                 padding: 10
                                 onEditingFinished: {
-                                    var idx = dataList.index(index, 0);
+                                    var idx = dataList.index(index, 1);
                                     dataList.setData(idx, nameEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
                                 }
@@ -164,7 +164,7 @@ ApplicationWindow {
                                 width: parent.width
                                 padding: 10
                                 onEditingFinished: {
-                                    var idx = dataList.index(index, 1);
+                                    var idx = dataList.index(index, 2);
                                     dataList.setData(idx, descriptionEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
                                 }
@@ -184,7 +184,7 @@ ApplicationWindow {
                                 font.pixelSize: 12
                                 padding: 10
                                 onEditingFinished: {
-                                    var idx = dataList.index(index, 2);
+                                    var idx = dataList.index(index, 3);
                                     dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
                                     quantitySlider.value = text
@@ -206,7 +206,7 @@ ApplicationWindow {
                                 stepSize: 5
                                 onValueChanged: {
                                     quantityEditor.text = value;
-                                    var idx = dataList.index(index, 2);
+                                    var idx = dataList.index(index, 3);
                                     dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
                                 }
@@ -225,7 +225,7 @@ ApplicationWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                                 font.pixelSize: 12
                                 onCheckedChanged: {
-                                    var idx = dataList.index(index, 3);
+                                    var idx = dataList.index(index, 4);
                                     dataList.setData(idx, flagItem.checked ,Qt.EditRole);
                                     dataList.submitAll();
                                 }
