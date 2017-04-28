@@ -66,7 +66,7 @@ bool initializeDb(QSqlDatabase db)
         QVariantList names;
         names << "One" << "Two" << "Three" << "Four";
         QVariantList descriptions;
-        descriptions << "Number One" << "Number Two" << "Number Three" << "Number 4";
+        descriptions << "Number One" << "Number Two" << "Number Three" << "Number Four";
         QVariantList quantity;
         quantity << 100 << 200 << 300 << 400;
         QVariantList flag;

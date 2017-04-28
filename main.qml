@@ -93,19 +93,19 @@ ApplicationWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: -5
                             }
-//                            MouseArea {
-//                                anchors.fill: parent
-//                                hoverEnabled: true
-//                                onEntered: {
-//                                    plus.color = "white"
-//                                }
-//                                onExited: {
-//                                    plus.color = "black"
-//                                }
-//                                onClicked: {
-//                                    dataList.appendRow()
-//                                }
-//                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    plus.color = "white"
+                                }
+                                onExited: {
+                                    plus.color = "black"
+                                }
+                                onClicked: {
+                                    dataList.appendRow()
+                                }
+                            }
                         }
 
                         Rectangle {
@@ -120,19 +120,19 @@ ApplicationWindow {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: -5
                             }
-//                            MouseArea {
-//                                anchors.fill: parent
-//                                hoverEnabled: true
-//                                onEntered: {
-//                                    minus.color = "white"
-//                                }
-//                                onExited: {
-//                                    minus.color = "black"
-//                                }
-//                                onClicked: {
-//                                    dataList.appendRow()
-//                                }
-//                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    minus.color = "white"
+                                }
+                                onExited: {
+                                    minus.color = "black"
+                                }
+                                onClicked: {
+                                    dataList.appendRow()
+                                }
+                            }
                         }
 
                         Label {
@@ -223,12 +223,13 @@ ApplicationWindow {
 
                             TextField {
                                 id: nameEditor
-                                text: Name
+                                text: {Name}
                                 visible: true
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width
                                 padding: 10
                                 onEditingFinished: {
+                                    console.log("nameEditor onEditingFinished");
                                     var idx = dataList.index(index, 1);
                                     dataList.setData(idx, nameEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
@@ -245,11 +246,12 @@ ApplicationWindow {
 
                             TextField {
                                 id: descriptionEditor
-                                text: Description
+                                text: {Description}
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width
                                 padding: 10
                                 onEditingFinished: {
+                                    console.log("descriptionEditor onEditingFinished")
                                     var idx = dataList.index(index, 2);
                                     dataList.setData(idx, descriptionEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
@@ -267,7 +269,7 @@ ApplicationWindow {
                                 id: quantityEditor
                                 text: Quantity
                                 anchors.verticalCenter: parent.verticalCenter
-                                font.pixelSize: 12
+                                width: 50
                                 padding: 10
 
                                 onEditingFinished: {
@@ -275,12 +277,11 @@ ApplicationWindow {
                                     var idx = dataList.index(index, 3);
                                     dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
                                     dataList.submitAll();
-                                    quantitySlider.value = text
                                     quantitySum = sumQuantity();
-
                                 }
 
-                                validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
+                                // validator : IntValidator{bottom: 100; top: 400}
+                                // inputMask: "999"
 
                             }
 
@@ -292,15 +293,25 @@ ApplicationWindow {
                                 anchors.rightMargin: 5
                                 from: 100
                                 to: 400
-                                value: Quantity
+                                value: {Quantity}
                                 snapMode: Slider.SnapOnRelease
                                 stepSize: 5
                                 onValueChanged: {
-                                    quantityEditor.text = value;
+                                    console.log("quantitySlider onValueChanged");
+                                    //quantityEditor.text = value;
                                     var idx = dataList.index(index, 3);
-                                    dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
+                                    dataList.setData(idx, quantitySlider.value ,Qt.EditRole);
                                     dataList.submitAll();
                                     quantitySum = sumQuantity();
+                                }
+
+                                ToolTip {
+                                    parent: quantitySlider.handle
+                                    visible: quantitySlider.pressed
+                                    text: {
+                                        quantityEditor.text = quantitySlider.valueAt(quantitySlider.position).toFixed(0)
+                                        quantitySlider.valueAt(quantitySlider.position).toFixed(0)
+                                    }
                                 }
                             }
                         }
@@ -313,7 +324,7 @@ ApplicationWindow {
 
                             CheckBox {
                                 id: flagItem
-                                checked: Flag
+                                checked: {Flag}
                                 anchors.verticalCenter: parent.verticalCenter
                                 font.pixelSize: 12
                                 onCheckedChanged: {
