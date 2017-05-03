@@ -30,6 +30,7 @@ private:
 
 public slots:
     bool appendRow();
+    bool deleteRow(int row);
 };
 
 #endif // SQLRELATIONALTABLEMODEL_H

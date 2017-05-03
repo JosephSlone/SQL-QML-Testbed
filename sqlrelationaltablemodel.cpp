@@ -44,6 +44,18 @@ bool SqlRelationalTableModel::appendRow()
         qDebug() << "Append Failed" << error.text();
     }
 
+    return true;
+}
+
+bool SqlRelationalTableModel::deleteRow(int row)
+{
+
+    qDebug() << "Deleting Row: " << row;
+
+    SqlRelationalTableModel::beginRemoveRows(QModelIndex(), row, row);
+    SqlRelationalTableModel::removeRow(row, QModelIndex());
+    SqlRelationalTableModel::endRemoveRows();
+    select();
 
     return true;
 }

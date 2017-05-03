@@ -1,4 +1,5 @@
 #include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QSqlDatabase>
@@ -16,7 +17,7 @@
 void listTable()
 {
     QSqlQuery query;
-    QString queryString = "select id, Name, Description, Quantity, Flag from data";
+    QString queryString = "select id, Name, Description, Quantity, Flag, Counter from data";
 
     query.exec(queryString);
 
@@ -29,7 +30,8 @@ void listTable()
                  << query.record().field(1).value().toString()
                  << query.record().field(2).value().toString()
                  << query.record().field(3).value().toInt()
-                 << query.record().field(4).value().toBool();
+                 << query.record().field(4).value().toBool()
+                 << query.record().field(5).value().toInt();
     }
     qDebug() << "------------------------";
     qDebug() << " ";
@@ -53,7 +55,8 @@ bool initializeDb(QSqlDatabase db)
             "Name        STRING  DEFAULT ''               , "
             "Description STRING  DEFAULT ''               , "
             "Quantity    INTEGER DEFAULT 100              , "
-            "Flag        BOOLEAN DEFAULT 1                  "
+            "Flag        BOOLEAN DEFAULT 1                , "
+            "Counter     INTEGER DEFAULT 120                "
             ");";
 
     QSqlQuery query;
@@ -61,7 +64,7 @@ bool initializeDb(QSqlDatabase db)
     if (query.exec(dataDDL))
     {
 
-        QString queryString = "INSERT INTO data (Name, Description, Quantity, Flag) VALUES (?,?,?,?)";
+        QString queryString = "INSERT INTO data (Name, Description, Quantity, Flag, Counter) VALUES (?,?,?,?,?)";
 
         QVariantList names;
         names << "One" << "Two" << "Three" << "Four";
@@ -71,12 +74,15 @@ bool initializeDb(QSqlDatabase db)
         quantity << 100 << 200 << 300 << 400;
         QVariantList flag;
         flag << 0 << 1 << 1 << 0;
+        QVariantList counter;
+        counter << 200 << 300 << 400 << 300;
 
         query.prepare(queryString);
         query.addBindValue(names);
         query.addBindValue(descriptions);
         query.addBindValue(quantity);
         query.addBindValue(flag);
+        query.addBindValue(counter);
 
         if (!query.execBatch())
         {
@@ -100,7 +106,8 @@ int main(int argc, char *argv[])
 {
     int returnCode = 0;
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+    //QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
