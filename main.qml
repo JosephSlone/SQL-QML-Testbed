@@ -42,32 +42,50 @@ ApplicationWindow {
     }
 
     function axisValues() {
-        var firstSeries = chartView.series(0)
-        if (firstSeries) {
-            var barSet = firstSeries.at(col)
-            var xAxis = chartView.axisX(barSet)
-            var catagories = [];
-            var values = [];
-            var name;
-            var quantity;
-            var idx;
+        var catagories = [];
+        var name;
+        var idx;
 
-            for(var i = 0; i < dataList.rowCount(); i++) {
-                idx = dataList.index(i, 1);
-                name = dataList.data(idx, Qt.DisplayRole);
-                catagories.push(name);
-                idx = dataList.index(i,3);
-                quantity = dataList.data(idx, Qt.DisplayRole);
-                values.push(quantity);
-            }
-
-            xAxis.categories = catagories;
-            barSet0.values = values;
-            chartView.axisY().min = 0;
-            chartView.axisY().max = 500;
+        for(var i = 0; i < dataList.rowCount(); i++) {
+            idx = dataList.index(i, 1);
+            name = dataList.data(idx, Qt.DisplayRole);
+            catagories.push(name);
         }
 
+        return catagories;
+    }
 
+    function reloadStackedBar() {
+        var series = chartView.series(0)
+        if (series) {
+            var barSet0 = series.at(0)
+            var barSet1 = series.at(1)
+            var xAxis = chartView.axisX(barSet0)
+
+            xAxis.categories = axisValues();
+            barSet0.values = barValues(3,0);
+            barSet1.values = barValues(5,0);
+        }
+    }
+
+    function reloadPieChart(chart, item) {
+
+        var idx;
+        var name;
+        var value;
+
+        chart.clear();
+
+        for (var i = 0; i < dataList.rowCount(); i++)
+        {
+            idx = dataList.index(i, item);
+            value = dataList.data(idx, Qt.DisplayRole);
+            idx = dataList.index(i, 1);
+            name = dataList.data(idx, Qt.DisplayRole);
+            chart.append(name, value);
+        }
+
+        chart.find("One").exploded = true;
     }
 
 
@@ -82,57 +100,37 @@ ApplicationWindow {
 
         Rectangle {
             id: chartContainer
-            width: parent.width
+            width: parent.width/2
             height: parent.height/2
-            anchors.top: container.bottom
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
             color: Material.color(Material.BlueGrey)
 
-            Button {
-                id: goButton
-                text: "Go!"
+            Rectangle {
+                id: chartTitle
+                width: parent.width - 20
+                height: 60
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.topMargin: 5
-                anchors.leftMargin: 5
-                onClicked: {
-                    var firstSeries = chartView.series(0)
-                    if (firstSeries) {
-                        var barSet0 = firstSeries.at(0)
-                        var barSet1 = firstSeries.at(1)
-                        var xAxis = chartView.axisX(barSet0)
-                        var catagories = [];
-                        var quantityValues = [];
-                        var counterValues = [];
-                        var counter;
-                        var name;
-                        var quantity;
-                        var idx;
+                anchors.margins: 10
+                radius: 10
+                color: Material.color(Material.brown)
 
-                        for(var i = 0; i < dataList.rowCount(); i++) {
-                            idx = dataList.index(i, 1);
-                            name = dataList.data(idx, Qt.DisplayRole);
-                            catagories.push(name);
-                            idx = dataList.index(i,3);
-                            quantity = dataList.data(idx, Qt.DisplayRole);
-                            quantityValues.push(quantity);
-                            idx = dataList.index(i,5);
-                            counter = dataList.data(idx, Qt.DisplayRole);
-                            counterValues.push(counter);
-                        }
-
-                        xAxis.categories = catagories;
-                        barSet0.values = quantityValues;
-                        barSet1.values = counterValues;
-                    }
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    text: "Stacked Bar Chart"
+                    font.pointSize: 16
+                    font.bold: true
                 }
-            }
 
+            }
 
             ChartView {
                 id: chartView
                 title: "Stacked Bar Chart"
-                anchors.top: goButton.bottom
+                anchors.top: chartTitle.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -144,36 +142,157 @@ ApplicationWindow {
                 StackedBarSeries {
                     id: stackedBar
                     name: "First Series"
-                    axisX: BarCategoryAxis { categories: ["One", "Two", "Three", "Four" ] }
+                    axisX: BarCategoryAxis { categories: axisValues() }
                     BarSet { label: "Quanity"; values: barValues(3, 0) }
                     BarSet { label: "Counter"; values: barValues(5, 0) }
                 }
             }
+        }
 
+        Rectangle {
+            id: pieContainer
+            width: parent.width/2
+            height: parent.height/2
+            anchors.top: parent.top
+            anchors.right: parent.right
+            color: Material.color(Material.BlueGrey)
 
+            Rectangle {
+                id: pieTitle
+                width: parent.width - 20
+                height: 60
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: 10
+                radius: 10
+                color: Material.color(Material.brown)
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    text: "Pie Chart"
+                    font.pointSize: 16
+                    font.bold: true
+                }
+
+            }
+
+            ChartView {
+                width: parent.width
+                anchors.top: pieTitle.bottom
+                anchors.bottom: parent.bottom
+                theme: ChartView.ChartThemeBrownSand
+                antialiasing: true
+
+                title: "Pie Chart Example"
+                legend.alignment: Qt.AlignBottom
+
+                PieSeries {
+                    id: pieSeries1
+                    horizontalPosition: 0.25
+
+                    Component.onCompleted: {
+                        reloadPieChart(pieSeries1, 3);
+                    }
+
+                }
+
+                PieSeries {
+                    id: pieSeries2
+                    horizontalPosition: 0.75
+
+                    Component.onCompleted: {
+                        reloadPieChart(pieSeries2, 5);
+                    }
+                }
+            }
+
+        }
+
+        Rectangle {
+            id: otherContainer
+            width: parent.width/2
+            height: parent.height/2
+            anchors.top: pieContainer.bottom
+            anchors.right: parent.right
+            color: Material.color(Material.BlueGrey)
+
+            Rectangle {
+                id: otherTitle
+                width: parent.width - 20
+                height: 60
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: 10
+                radius: 10
+                color: Material.color(Material.brown)
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    text: "Other Chart"
+                    font.pointSize: 16
+                    font.bold: true
+                }
+
+            }
         }
 
 
         Rectangle {
 
-            id: container
-            width: parent.width
+            id: listContainer
+            width: parent.width/2
             height: parent.height/2
             anchors.top: parent.top
             anchors.left: parent.left
 
-            color: Material.color(Material.Grey)
+            color: Material.color(Material.BlueGrey)
 
-            ListView {
-                model: dataList
-                anchors.fill: parent
-                delegate: theDelegate
-                header: headerRow
-                headerPositioning: ListView.OverlayHeader
-                footer: footerRow
-                spacing: 5
-                height: parent.height
-                clip: true
+            Rectangle {
+                id: dataTitle
+                width: parent.width - 20
+                height: 60
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: 10
+                radius: 10
+                color: Material.color(Material.brown)
+
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    text: "Data Set"
+                    font.pointSize: 16
+                    font.bold: true
+                }
+
+            }
+
+
+            Rectangle {
+
+                width: parent.width - 20
+                anchors.top: dataTitle.bottom
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.margins: 10
+                radius: 10
+
+                ListView {
+                    model: dataList
+                    anchors.fill: parent
+                    delegate: theDelegate
+                    header: headerRow
+                    headerPositioning: ListView.OverlayHeader
+                    footer: footerRow
+                    spacing: 5
+                    height: parent.height
+                    clip: true
+                }
             }
 
             Component {
@@ -255,15 +374,11 @@ ApplicationWindow {
                             }
                             Label {
                                 text: "Quantity"
-                                width: 200
-                            }
-                            Label {
-                                text: "Flag"
-                                width: 30
+                                width: 75
                             }
                             Label {
                                 text: "Counter"
-                                width: 30
+                                width: 75
                             }
                         }
                     }
@@ -275,7 +390,7 @@ ApplicationWindow {
 
                 Item {
                     x: 5
-                    width: parent.width
+                    width: parent.width - 20
                     height: 30
 
                     Rectangle {
@@ -376,7 +491,7 @@ ApplicationWindow {
                             }
 
                             Rectangle {
-                                width: 200
+                                width: 75
                                 height: 30
                                 anchors.verticalCenter: parent.verticalCenter
                                 color: "transparent"
@@ -385,7 +500,7 @@ ApplicationWindow {
                                     id: quantityEditor
                                     text: Quantity ? Quantity : 0
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 50
+                                    width: parent.width
                                     padding: 10
 
                                     onEditingFinished: {
@@ -393,63 +508,17 @@ ApplicationWindow {
                                         dataList.setData(idx, quantityEditor.text ,Qt.EditRole);
                                         dataList.submitAll();
                                         quantitySum = sumQuantity();
+                                        reloadStackedBar();
+                                        reloadPieChart(pieSeries1, 3);
                                     }
 
                                     validator : IntValidator{bottom: 100; top: 400}
-                                    //                                inputMask: "999"
                                     inputMethodHints: Qt.ImhDigitsOnly
                                 }
-
-                                Slider {
-                                    id: quantitySlider
-                                    anchors.left: quantityEditor.right
-                                    anchors.leftMargin: 5
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: 5
-                                    from: 100
-                                    to: 400
-                                    value: {Quantity ? Quantity : 0}
-                                    snapMode: Slider.SnapOnRelease
-                                    stepSize: 5
-                                    onValueChanged: {
-                                        var idx = dataList.index(index, 3);
-                                        dataList.setData(idx, quantitySlider.value ,Qt.EditRole);
-                                        dataList.submitAll();
-                                        quantitySum = sumQuantity();
-                                    }
-
-                                    ToolTip {
-                                        parent: quantitySlider.handle
-                                        visible: quantitySlider.pressed
-                                        text: {
-                                            quantityEditor.text = quantitySlider.valueAt(quantitySlider.position).toFixed(0)
-                                            quantitySlider.valueAt(quantitySlider.position).toFixed(0)
-                                        }
-                                    }
-                                }
                             }
 
                             Rectangle {
-                                width: flagItem.width
-                                height: 30
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: "transparent"
-
-                                CheckBox {
-                                    id: flagItem
-                                    checked: {Flag ? Flag : false}
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    font.pixelSize: 12
-                                    onCheckedChanged: {
-                                        var idx = dataList.index(index, 4);
-                                        dataList.setData(idx, flagItem.checked ,Qt.EditRole);
-                                        dataList.submitAll();
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                width: 200
+                                width: 75
                                 height: 30
                                 anchors.verticalCenter: parent.verticalCenter
                                 color: "transparent"
@@ -464,6 +533,8 @@ ApplicationWindow {
                                         var idx = dataList.index(index, 5);
                                         dataList.setData(idx, counterEditor.text ,Qt.EditRole);
                                         dataList.submitAll();
+                                        reloadStackedBar();
+                                        reloadPieChart(pieSeries2, 5);
                                     }
                                 }
                             }
