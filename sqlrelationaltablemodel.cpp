@@ -50,8 +50,6 @@ bool SqlRelationalTableModel::appendRow()
 bool SqlRelationalTableModel::deleteRow(int row)
 {
 
-    qDebug() << "Deleting Row: " << row;
-
     SqlRelationalTableModel::beginRemoveRows(QModelIndex(), row, row);
     SqlRelationalTableModel::removeRow(row, QModelIndex());
     SqlRelationalTableModel::endRemoveRows();
