@@ -8,6 +8,8 @@
 #include <QtSql>
 #include <QString>
 
+#include <QSqlRelation>
+
 
 #include <QDebug>
 
@@ -246,13 +248,28 @@ int main(int argc, char *argv[])
 
         SqlRelationalTableModel dataTable;
         dataTable.setTable("data");
-        dataTable.select();
         dataTable.generateRoleNames();
+        dataTable.select();
+
+        SqlRelationalTableModel masterTable;
+        masterTable.setTable("master");
+        masterTable.generateRoleNames();
+        masterTable.select();
+        masterTable.setRelation(2, QSqlRelation("client", "id", "Name"));
+
+        SqlRelationalTableModel clientTable;
+        clientTable.setTable("client");
+        clientTable.generateRoleNames();
+        clientTable.select();
+
+        qDebug() << masterTable.relation(2).displayColumn() << masterTable.relation(2).indexColumn() << masterTable.relation(2).isValid();
 
 
         QQmlApplicationEngine engine;
 
         engine.rootContext()->setContextProperty("dataList", &dataTable);
+        engine.rootContext()->setContextProperty("masterList", &masterTable);
+        engine.rootContext()->setContextProperty("clientList", &clientTable);
         engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
         returnCode = app.exec();

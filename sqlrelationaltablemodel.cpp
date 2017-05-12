@@ -16,18 +16,22 @@ void SqlRelationalTableModel::generateRoleNames()
 
 QVariant SqlRelationalTableModel::data(const QModelIndex &index, int role) const
 {
-    QVariant value;
+    QVariant value = "";
 
-    if(role < Qt::UserRole) {
+    if (role < Qt::UserRole) {
         value = QSqlRelationalTableModel::data(index, role);
     }
-    else {
+    else
+    {
         int columnIdx = role - Qt::UserRole - 1;
         QModelIndex modelIndex = this->index(index.row(), columnIdx);
         value = QSqlRelationalTableModel::data(modelIndex, Qt::DisplayRole);
     }
+
     return value;
 }
+
+
 
 bool SqlRelationalTableModel::appendRow()
 {
