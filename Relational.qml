@@ -3,6 +3,8 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
+import "qrc:/dbLibrary.js" as DbLibrary
+
 
 Page {
 
@@ -12,28 +14,6 @@ Page {
     property int masterIdFieldId: 0
     property int masterNameFieldId: 1
     property int masterClientObjectIdFieldId: 2
-
-    function getForeignField(key, keyColumn, sourceColumn) {
-
-        var returnVal = "";
-        var idx;
-        var targetValue;
-
-        for (var i = 0; i < clientList.rowCount() ; i++)
-        {
-            idx = clientList.index(i, keyColumn, clientList);
-            targetValue = clientList.data(idx, Qt.DisplayRole);
-            if (key === targetValue)
-            {
-                var valueIdx = clientList.index(i, sourceColumn, clientList);
-                returnVal = clientList.data(valueIdx, Qt.DisplayRole);
-                console.log(returnVal);
-                break;
-            }
-        }
-        return (returnVal);
-
-    }
 
     Rectangle {
 
@@ -61,8 +41,6 @@ Page {
         anchors.left: parent.left
         anchors.right: parent.right
 
-
-
         Rectangle {
 
             width: parent.width - 20
@@ -83,6 +61,7 @@ Page {
 
 
             ListView {
+                id: relationalList
                 model: masterList
                 anchors.top: headerNotes.bottom
                 anchors.bottom: parent.bottom
@@ -101,10 +80,11 @@ Page {
             Component {
                 id: rowDelegate
 
+
                 Item {
                     x: 5
                     width: parent.width - 20
-                    height: 30
+                    height: 50
 
                     Rectangle {
                         id: recContainer
@@ -119,7 +99,7 @@ Page {
                                 color: Material.color(Material.Amber)
                                 font.pointSize: 14
                                 width: 30
-
+                                anchors.verticalCenter: parent.verticalCenter
                             }
 
                             Label {
@@ -127,12 +107,15 @@ Page {
                                 color: Material.color(Material.Amber)
                                 font.pointSize: 14
                                 width: 30
+                                anchors.verticalCenter: parent.verticalCenter
                             }
 
                             Label {
                                 text: Name
                                 color: "white"
                                 font.pointSize: 14
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 100
                             }
 
                             Label {
@@ -144,12 +127,32 @@ Page {
                                 text: clientObjectId
                                 color: "white"
                                 font.pointSize: 14
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 50
                             }
 
                             Label {
-                                text: {getForeignField(clientObjectId, clientIdFieldId, clientDataElementFieldId)}
+                                id: dbLabel
+                                text: DbLibrary.lookup(clientList, clientObjectId, clientIdFieldId, clientDataElementFieldId);
                                 color: Material.color(Material.Amber)
                                 font.pointSize: 14
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 100
+                            }
+
+                            ComboBox {
+                                model: clientList
+                                textRole: "dataElement"
+                                currentIndex: {DbLibrary.lookupIndex(clientList, clientObjectId, clientIdFieldId)}
+                                anchors.verticalCenter: parent.verticalCenter
+                                onActivated: {
+                                    DbLibrary.saveChanges(masterList, DbLibrary.lookupIndex(masterList, id, masterIdFieldId),
+                                                          masterClientObjectIdFieldId,
+                                                          clientList.data(clientList.index(currentIndex, 0),Qt.DisplayRole));
+
+                                    dbLabel.text = DbLibrary.lookup(clientList, clientObjectId, clientIdFieldId, clientDataElementFieldId);
+
+                                }
                             }
                         }
                     }

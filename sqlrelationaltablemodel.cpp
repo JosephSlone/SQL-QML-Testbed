@@ -19,13 +19,13 @@ QVariant SqlRelationalTableModel::data(const QModelIndex &index, int role) const
     QVariant value = "";
 
     if (role < Qt::UserRole) {
-        value = QSqlRelationalTableModel::data(index, role);
+        value = QSqlTableModel::data(index, role);
     }
     else
     {
         int columnIdx = role - Qt::UserRole - 1;
         QModelIndex modelIndex = this->index(index.row(), columnIdx);
-        value = QSqlRelationalTableModel::data(modelIndex, Qt::DisplayRole);
+        value = QSqlTableModel::data(modelIndex, Qt::DisplayRole);
     }
 
     return value;
@@ -35,7 +35,7 @@ QVariant SqlRelationalTableModel::data(const QModelIndex &index, int role) const
 
 bool SqlRelationalTableModel::appendRow()
 {
-    QString queryString = QString("INSERT INTO %1 DEFAULT VALUES").arg(QSqlRelationalTableModel::tableName());
+    QString queryString = QString("INSERT INTO %1 DEFAULT VALUES").arg(QSqlTableModel::tableName());
     QSqlQuery query;
 
     if (query.exec(queryString))

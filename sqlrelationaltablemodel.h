@@ -1,7 +1,7 @@
 #ifndef SQLRELATIONALTABLEMODEL_H
 #define SQLRELATIONALTABLEMODEL_H
 
-#include <QSqlRelationalTableModel>
+#include <QSqlTableModel>
 
 #include <QSqlRecord>
 #include <QSqlQuery>
@@ -13,7 +13,7 @@
 #include <qDebug>
 
 
-class SqlRelationalTableModel : public QSqlRelationalTableModel
+class SqlRelationalTableModel : public QSqlTableModel
 {
     Q_OBJECT
 

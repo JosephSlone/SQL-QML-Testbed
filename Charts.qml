@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.0
 import QtCharts 2.0
 
+import "qrc:/dbLibrary.js" as DbLibrary
+
 
 Page {
     visible: true
@@ -553,9 +555,7 @@ Page {
                                     width: parent.width
                                     padding: 10
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, nameFieldId);
-                                        dataList.setData(idx, nameEditor.text ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, nameFieldId, nameEditor.text);
                                     }
                                 }
                             }
@@ -574,9 +574,7 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment1FID);
-                                        dataList.setData(idx, payment1Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment1FID, payment1Editor.text*100);
                                         reloadStackedBar();
                                         reloadPieChart(pieSeries1, payment1FID);
                                     }
@@ -598,9 +596,7 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment2FID);
-                                        dataList.setData(idx, payment2Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment2FID, payment2Editor.text * 100);
                                         reloadStackedBar();
                                         reloadPieChart(pieSeries1, payment2FID);
                                     }
@@ -621,11 +617,9 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment3FID);
-                                        dataList.setData(idx, payment3Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment3FID, payment3Editor.text * 100);
                                         reloadStackedBar();
-//                                        reloadPieChart(pieSeries1, payment3FID);
+                                        reloadPieChart(pieSeries1, payment3FID);
                                     }
                                 }
                             }
@@ -644,11 +638,9 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment4FID);
-                                        dataList.setData(idx, payment4Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment4FID, payment4Editor.text * 100);
                                         reloadStackedBar();
-//                                        reloadPieChart(pieSeries1, payment4FID);
+                                        reloadPieChart(pieSeries1, payment4FID);
                                     }
                                 }
                             }
@@ -667,11 +659,9 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment5FID);
-                                        dataList.setData(idx, payment5Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment5FID, payment5Editor.text * 100);
                                         reloadStackedBar();
-//                                        reloadPieChart(pieSeries1, payment2FID);
+                                        reloadPieChart(pieSeries1, payment2FID);
                                     }
                                 }
                             }
@@ -690,11 +680,9 @@ Page {
                                     padding: 10
                                     horizontalAlignment: TextInput.AlignRight
                                     onEditingFinished: {
-                                        var idx = dataList.index(index, payment6FID);
-                                        dataList.setData(idx, payment6Editor.text*100 ,Qt.EditRole);
-                                        dataList.submitAll();
+                                        DbLibrary.saveChanges(dataList, index, payment6FID, payment6Editor.text * 100);
                                         reloadStackedBar();
-//                                        reloadPieChart(pieSeries1, payment2FID);
+                                        reloadPieChart(pieSeries1, payment2FID);
                                     }
                                 }
                             }

@@ -170,7 +170,7 @@ bool initializeDb(QSqlDatabase db)
         QVariantList dataNames;
         dataNames << "Element 1" << "Element 2" << "Element 3" << "Element 4" << "Element 5";
         QVariantList dataPointers;
-        dataPointers << 1 << 1 << 1 << 2 << 2;
+        dataPointers << 1 << 1 << 7 << 15 << 20;
 
         query.clear();
         query.prepare(queryString);
@@ -255,15 +255,12 @@ int main(int argc, char *argv[])
         masterTable.setTable("master");
         masterTable.generateRoleNames();
         masterTable.select();
-        masterTable.setRelation(2, QSqlRelation("client", "id", "Name"));
+        //masterTable.setRelation(2, QSqlRelation("client", "id", "Name"));
 
         SqlRelationalTableModel clientTable;
         clientTable.setTable("client");
         clientTable.generateRoleNames();
         clientTable.select();
-
-        qDebug() << masterTable.relation(2).displayColumn() << masterTable.relation(2).indexColumn() << masterTable.relation(2).isValid();
-
 
         QQmlApplicationEngine engine;
 

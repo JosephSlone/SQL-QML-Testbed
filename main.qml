@@ -5,6 +5,8 @@ import QtQuick.Controls.Material 2.0
 import QtCharts 2.0
 
 
+
+
 ApplicationWindow {
     visible: true
     visibility: "Maximized"
