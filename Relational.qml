@@ -5,7 +5,6 @@ import QtQuick.Controls.Material 2.0
 
 import "qrc:/dbLibrary.js" as DbLibrary
 
-
 Page {
 
 
@@ -14,6 +13,8 @@ Page {
     property int masterIdFieldId: 0
     property int masterNameFieldId: 1
     property int masterClientObjectIdFieldId: 2
+
+    property int mode: 0
 
     Rectangle {
 
@@ -68,13 +69,67 @@ Page {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 10
-                delegate: rowDelegate
-                //header: headerRow
-                //headerPositioning: ListView.OverlayHeader
-                //footer: footerRow
+                delegate: switch (mode) {
+                          case 0: return rowDelegate;
+                          case 1: return editRowDelegate;
+                }
                 spacing: 5
                 height: parent.height
                 clip: true
+            }
+
+
+            Component {
+                id: editRowDelegate
+                Item {
+                    x: 5
+                    width: parent.width - 20
+                    height: 50
+
+                    Rectangle {
+                        id: editorContainer
+                        color: "green"
+
+                        Row {
+                            spacing: 5
+
+                            Button {
+                                text: "View"
+                                onClicked: {
+                                    mode = 0;
+                                }
+                            }
+
+                            Item {
+                                width: 50
+                                height: parent.height
+                            }
+
+                            TextField {
+                                id: nameEdit
+                                text: {Name ? Name : ""}
+                                visible: true
+                                anchors.verticalCenter: parent.verticalCenter
+                                padding: 10
+                                onEditingFinished: {
+                                    DbLibrary.saveChanges(masterList, index, masterNameFieldId, nameEdit.text);
+                                }
+                            }
+
+                            ComboBox {
+                                model: clientList
+                                textRole: "dataElement"
+                                currentIndex: {DbLibrary.lookupIndex(clientList, clientObjectId, clientIdFieldId)}
+                                anchors.verticalCenter: parent.verticalCenter
+                                onActivated: {
+                                    DbLibrary.saveChanges(masterList, DbLibrary.lookupIndex(masterList, id, masterIdFieldId),
+                                                          masterClientObjectIdFieldId,
+                                                          clientList.data(clientList.index(currentIndex, 0),Qt.DisplayRole));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             Component {
@@ -93,6 +148,18 @@ Page {
 
                         Row {
                             spacing: 5
+
+                            Button {
+                                text: "Edit"
+                                onClicked: {
+                                    mode = 1;
+                                }
+                            }
+
+                            Item {
+                                width: 50
+                                height: parent.height
+                            }
 
                             Label {
                                 text: index
@@ -119,11 +186,6 @@ Page {
                             }
 
                             Label {
-                                id: spacer
-                                text: "     "
-                            }
-
-                            Label {
                                 text: clientObjectId
                                 color: "white"
                                 font.pointSize: 14
@@ -138,21 +200,6 @@ Page {
                                 font.pointSize: 14
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 100
-                            }
-
-                            ComboBox {
-                                model: clientList
-                                textRole: "dataElement"
-                                currentIndex: {DbLibrary.lookupIndex(clientList, clientObjectId, clientIdFieldId)}
-                                anchors.verticalCenter: parent.verticalCenter
-                                onActivated: {
-                                    DbLibrary.saveChanges(masterList, DbLibrary.lookupIndex(masterList, id, masterIdFieldId),
-                                                          masterClientObjectIdFieldId,
-                                                          clientList.data(clientList.index(currentIndex, 0),Qt.DisplayRole));
-
-                                    dbLabel.text = DbLibrary.lookup(clientList, clientObjectId, clientIdFieldId, clientDataElementFieldId);
-
-                                }
                             }
                         }
                     }
